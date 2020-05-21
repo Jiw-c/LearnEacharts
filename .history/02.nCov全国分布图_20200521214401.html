@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>nCov全国分布图</title>
+  <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+  <script src="./js/china.js"></script>
+</head>
+<body>
+  <!-- 定义dom容器 -->
+  <div id="container" style="width: 800px;height:600px;margin: 0 auto;"></div>
+  <script>
+    // 基于准备好的dom，初始化echarts实例
+    var myChart = echarts.init(document.getElementById('container'));
+
+    // fetch xmlHttpRequest
+    // fetch 不需要引入任何文件
+    fetch('http://localhost:3000/')
+      .then(
+      // 把可读数据转为json格式
+      res => res.json())
+      .then(res => {
+        console.log(res);
+
+        // 获取到的疫情数据
+        const result = res.getAreaStat;
+        console.log(result);
+        var filterData = [];
+        result.forEach(item => {
+          filterData.push({
+            name: item.provinceShortName,  // 城市
+            value: item.confirmedCount,   
+            deadCount: item.deadCount,
+            curedCount: item.curedCount
+          })
+        })
+        console.log("处理后数据",filterData);
+        
+        myChart.setOption({
+      title: {
+        text: "nCov-全国实例疫情数据分布图",
+        subtext: '疫情专题',
+        left: 'center'
+      },
+      // 
+      backgroundColor: "#f7f7f7",
+      series: [
+        {
+          type: 'map',  // 当前图标类型
+          map: 'china',  // 当前地图是中国地图
+          label: {
+            // 覆盖物设置
+            show: true
+          }
+        }
+      ]
+    })
+      })
+  </script>
+</body>
+</html>
